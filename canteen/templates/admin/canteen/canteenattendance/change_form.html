@@ -1,0 +1,55 @@
+<!-- templates/admin/canteen/canteenattendance/change_form.html -->
+{% extends "admin/change_form.html" %}
+{% load static %}
+
+{% block extrahead %}
+{{ block.super }}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+    $('#id_card_number').on('input', function() {
+        const cardNumber = $(this).val().trim();
+        if (cardNumber.length >= 4) {
+            $.get('{% url "admin:get_employee" %}', {card_number: cardNumber})
+                .done(function(data) {
+                    const detailsDiv = $('#employee-details');
+                    if (data.exists) {
+                        detailsDiv.html(`
+                            <div class="employee-info">
+                                <h3>Employee Details</h3>
+                                <p><strong>Name:</strong> ${data.name}</p>
+                                <p><strong>Card Number:</strong> ${data.cardNumber}</p>
+                                <p><strong>Department:</strong> ${data.department}</p>
+                                <p><strong>Date:</strong> ${new Date().toLocaleDateString()}</p>
+                                <p><strong>Time:</strong> ${new Date().toLocaleTimeString()}</p>
+                            </div>
+                        `);
+                    } else {
+                        detailsDiv.html('<div class="error">Employee not found</div>');
+                    }
+                });
+        }
+    }).focus();
+});
+</script>
+<style>
+.employee-info {
+    background: #f8f8f8;
+    padding: 15px;
+    margin: 15px 0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+.error {
+    color: #dc3545;
+    padding: 10px;
+}
+</style>
+{% endblock %}
+
+{% block field_sets %}
+{% for fieldset in adminform %}
+  {% include "admin/includes/fieldset.html" %}
+{% endfor %}
+<div id="employee-details"></div>
+{% endblock %}

@@ -1,0 +1,146 @@
+{% extends 'admin/base_site.html' %}
+{% load static %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+    /* Main container styling */
+    .report-container {
+        max-width: 1200px;
+        margin: 20px auto;
+        padding: 20px;
+        background: #fff;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    /* Header styling */
+    .report-header {
+        color: #333;
+        border-bottom: 2px solid #e1e1e1;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+    }
+
+    /* Table styling */
+    .report-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 30px;
+        font-size: 14px;
+    }
+
+    .report-table th {
+        background-color: #f5f5f5;
+        color: #333;
+        text-align: left;
+        padding: 12px 15px;
+        border-bottom: 2px solid #e1e1e1;
+    }
+
+    .report-table td {
+        padding: 10px 15px;
+        border-bottom: 1px solid #e1e1e1;
+    }
+
+    .report-table tr:hover td {
+        background-color: #f9f9f9;
+    }
+
+    /* Section headers */
+    .section-header {
+        color: #666;
+        margin: 25px 0 15px 0;
+        font-size: 18px;
+    }
+
+    /* Button styling - Fixed version */
+    .dashboard-button {
+        display: inline-block;
+        padding: 10px 20px;
+        background: #417690;
+        color: white !important; /* Force white text */
+        text-decoration: none;
+        border-radius: 4px;
+        transition: background 0.3s;
+        font-weight: 500;
+        border: none;
+        cursor: pointer;
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .dashboard-button:hover {
+        background: #205067;
+        color: white !important;
+    }
+
+    /* Button container */
+    .button-container {
+        text-align: center;
+        margin-top: 30px;
+        padding: 15px 0;
+    }
+
+    /* Empty state styling */
+    .empty-state {
+        color: #999;
+        font-style: italic;
+        text-align: center;
+        padding: 20px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="report-container">
+    <h1 class="report-header">Canteen Usage Reports</h1>
+
+    <h2 class="section-header">Last 30 Days Attendance</h2>
+    <table class="report-table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Total Employees</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for day in daily_attendance %}
+            <tr>
+                <td>{{ day.date }}</td>
+                <td>{{ day.total }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="2" class="empty-state">No attendance data available</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h2 class="section-header">Department Breakdown</h2>
+    <table class="report-table">
+        <thead>
+            <tr>
+                <th>Department</th>
+                <th>Total Visits</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for dept in dept_breakdown %}
+            <tr>
+                <td>{{ dept.employee__department__name }}</td>
+                <td>{{ dept.total }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="2" class="empty-state">No department data available</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="button-container">
+        <a href="/dashboard/" class="dashboard-button">Back to Dashboard</a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,72 @@
+{% extends 'admin/base_site.html' %}
+{% load static %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+    /* ... (include your existing styles) ... */
+
+    .report-actions {
+        margin: 20px 0;
+        display: flex;
+        justify-content: space-between;
+    }
+    .date-selector {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <h1 class="dashboard-header">Department Attendance Report</h1>
+
+    <div class="filter-section">
+        <form method="get" class="filter-form">
+            <div class="date-selector">
+                <label for="date">Select Date:</label>
+                <input type="date" name="date" value="{{ selected_date }}">
+            </div>
+
+            <label for="department">Filter by Department:</label>
+            <select name="department" id="department">
+                <option value="">All Departments</option>
+                {% for dept in departments %}
+                <option value="{{ dept.id }}" {% if dept.id == selected_department %}selected{% endif %}>
+                    {{ dept.name }}
+                </option>
+                {% endfor %}
+            </select>
+
+            <button type="submit" class="filter-button">Apply Filter</button>
+            <button type="submit" name="download" value="1" class="action-button">Download CSV</button>
+            <a href="{% url 'department_report' %}" class="action-button">Reset</a>
+        </form>
+    </div>
+
+    <table class="attendance-table">
+        <thead>
+            <tr>
+                <th>Department</th>
+                <th>Total Attendees</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in department_breakdown %}
+            <tr>
+                <td>{{ item.employee__department__name }}</td>
+                <td>{{ item.total }}</td>
+                <td>{{ selected_date }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="3" class="empty-state">No attendance data for selected date</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

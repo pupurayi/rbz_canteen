@@ -1,0 +1,37 @@
+<!-- templates/canteen/home.html -->
+{% extends 'canteen/base.html' %}
+
+{% block content %}
+<h2>Today's Canteen Attendance</h2>
+<p>Only administrators can record attendance via the admin interface.</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>Employee</th>
+            <th>Department</th>
+            <th>Time</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for attendance in today_attendance %}
+        <tr>
+            <td>{{ attendance.employee.user.get_full_name }}</td>
+            <td>{{ attendance.employee.department.name }}</td>
+            <td>{{ attendance.time_in }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="3">No attendance recorded yet today</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% if user.is_superuser %}
+<div style="margin-top: 20px;">
+    <a href="/admin/canteen/scan-card/" class="button">Record Attendance (Admin)</a>
+    <a href="/admin/canteen/canteenattendance/add/" class="button">Manual Entry (Admin)</a>
+</div>
+{% endif %}
+{% endblock %}

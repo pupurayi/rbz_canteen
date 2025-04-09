@@ -10,9 +10,9 @@ from datetime import datetime
 
 
 class CanteenAdminSite(admin.AdminSite):
-    site_header = ('RBZ Canteen Management System')  # Header at top of admin pages
-    site_title = ('RBZ Canteen Admin')              # Text in browser title tab
-    index_title = ('Dashboard')                     # Text on the admin index page
+    admin.site. site_header = 'RBZ Canteen Management System'  # Header at top of admin pages
+    admin.sitesite_title = 'RBZ Canteen Admin'             # Text in browser title tab
+    admin.site.index_title = 'Welcome to the RBZ Attendance Dashboard'  # Text on the admin index page
 
 # Create the custom admin site instance
 admin_site = CanteenAdminSite(name='myadmin')
@@ -37,7 +37,6 @@ class CanteenAttendanceForm(forms.ModelForm):
     class Meta:
         model = CanteenAttendance
         fields = []
-
 
 @admin.register(CanteenAttendance)
 class CanteenAttendanceAdmin(admin.ModelAdmin):
@@ -85,7 +84,6 @@ class CanteenAttendanceAdmin(admin.ModelAdmin):
         if 'adminform' in context and 'employee' in context['adminform'].form.fields:
             del context['adminform'].form.fields['employee']
         return super().render_change_form(request, context, add, change, form_url, obj)
-
 
 @admin.register(Department)
 class DepartmentAdmin(admin.ModelAdmin):

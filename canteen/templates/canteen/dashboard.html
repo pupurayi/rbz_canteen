@@ -3,152 +3,329 @@
 
 {% block extrastyle %}
 {{ block.super }}
+<link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.dataTables.min.css">
 <style>
     /* Dashboard container */
     .dashboard-container {
         max-width: 1200px;
         margin: 20px auto;
-        padding: 20px;
+        padding: 25px;
         background: #fff;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        border-radius: 10px;
     }
 
     /* Header styling */
     .dashboard-header {
-        color: #333;
+        color: #205067;
         border-bottom: 2px solid #e1e1e1;
-        padding-bottom: 10px;
-        margin-bottom: 20px;
+        padding-bottom: 12px;
+        margin-bottom: 25px;
+        font-size: 26px;
+        font-weight: 600;
     }
 
     /* Current datetime display */
     .current-datetime {
         background: #f0f8ff;
-        padding: 10px;
-        margin-bottom: 20px;
-        border-radius: 4px;
+        padding: 12px;
+        margin-bottom: 25px;
+        border-radius: 6px;
         text-align: center;
         font-weight: bold;
+        color: #205067;
+        font-size: 15px;
     }
 
     /* Table styling */
     .attendance-table {
         width: 100%;
-        border-collapse: collapse;
-        margin-bottom: 30px;
+        border-collapse: separate;
+        border-spacing: 0;
+        margin-bottom: 25px;
         font-size: 14px;
     }
 
     .attendance-table th {
-        background-color: #f5f5f5;
-        color: #333;
+        background-color: #205067;
+        color: white;
         text-align: left;
-        padding: 12px 15px;
-        border-bottom: 2px solid #e1e1e1;
+        padding: 14px 16px;
+        border: none;
+        position: sticky;
+        top: 0;
     }
 
     .attendance-table td {
-        padding: 10px 15px;
-        border-bottom: 1px solid #e1e1e1;
+        padding: 12px 16px;
+        border-bottom: 1px solid #e8e8e8;
+        vertical-align: middle;
+    }
+
+    .attendance-table tr:nth-child(even) {
+        background-color: #fafafa;
     }
 
     .attendance-table tr:hover td {
-        background-color: #f9f9f9;
+        background-color: #f5f5f5;
     }
 
     /* Button styling */
     .action-button {
-        display: inline-block;
-        padding: 8px 15px;
-        margin-right: 10px;
-        background: #417690;
+        display: inline-flex;
+        align-items: center;
+        padding: 9px 16px;
+        background: #205067;
         color: white !important;
         text-decoration: none;
-        border-radius: 4px;
-        transition: background 0.3s;
+        border-radius: 5px;
+        transition: all 0.2s;
         font-weight: 500;
+        border: none;
+        cursor: pointer;
+        font-size: 14px;
+        gap: 8px;
     }
 
     .action-button:hover {
-        background: #205067;
+        background: #13384a;
+        transform: translateY(-1px);
     }
 
     .button-group {
-        margin: 25px 0;
-        padding: 15px 0;
+        margin: 20px 0;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
     }
 
     /* Filter styles */
     .filter-section {
-        background: #f8f8f8;
-        padding: 15px;
-        margin-bottom: 20px;
-        border-radius: 4px;
+        background: #f8fafb;
+        padding: 18px;
+        margin-bottom: 25px;
+        border-radius: 6px;
+        border: 1px solid #e0e6ed;
     }
 
     .filter-form {
         display: flex;
         align-items: center;
         gap: 15px;
+        flex-wrap: wrap;
     }
 
     .filter-form select, .filter-form input {
-        padding: 8px 12px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
+        padding: 9px 14px;
+        border: 1px solid #d9dde1;
+        border-radius: 5px;
+        min-width: 220px;
+        font-size: 14px;
     }
 
     .filter-button {
-        padding: 8px 15px;
-        background: #417690;
+        padding: 9px 18px;
+        background: #205067;
         color: white;
         border: none;
-        border-radius: 4px;
+        border-radius: 5px;
         cursor: pointer;
+        transition: all 0.2s;
+        font-weight: 500;
+    }
+
+    .filter-button:hover {
+        background: #13384a;
     }
 
     /* Card number styling */
     .card-number {
-        font-family: monospace;
-        letter-spacing: 1px;
+        font-family: 'Roboto Mono', monospace;
+        letter-spacing: 0.5px;
+        color: #333;
+    }
+
+    /* Section header */
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+        gap: 15px;
+    }
+
+    .section-title {
+        color: #205067;
+        font-size: 19px;
+        margin: 0;
+        font-weight: 600;
+    }
+
+    /* Empty state */
+    .empty-state {
+        text-align: center;
+        padding: 30px;
+        color: #666;
+        font-style: italic;
+        background: #f9f9f9;
+        border-radius: 6px;
+        font-size: 15px;
+    }
+
+    /* DataTables customization */
+    .dataTables_wrapper {
+        margin-top: 15px;
+    }
+
+    .dataTables_filter {
+        margin-left: auto !important;
+    }
+
+    .dataTables_filter input {
+        padding: 8px 14px !important;
+        border: 1px solid #d9dde1 !important;
+        border-radius: 5px !important;
+        margin-left: 10px !important;
+    }
+
+    .dataTables_length select {
+        padding: 7px 12px !important;
+        border: 1px solid #d9dde1 !important;
+        border-radius: 5px !important;
+    }
+
+    .dataTables_paginate .paginate_button {
+        padding: 7px 13px !important;
+        margin: 0 4px !important;
+        border: 1px solid #d9dde1 !important;
+        border-radius: 5px !important;
+        color: #205067 !important;
+        transition: all 0.2s;
+    }
+
+    .dataTables_paginate .paginate_button.current {
+        background: #205067 !important;
+        color: white !important;
+        border-color: #205067 !important;
+    }
+
+    .dataTables_paginate .paginate_button:hover {
+        background: #f0f4f8 !important;
+        color: #13384a !important;
+    }
+
+    /* Combined controls bar */
+    .table-controls {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-bottom: 20px;
+        background: #f8fafb;
+        padding: 12px 15px;
+        border-radius: 6px;
+        border: 1px solid #e0e6ed;
+    }
+
+    .export-buttons {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    @media (max-width: 768px) {
+        .filter-form,
+        .section-header,
+        .table-controls {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .dataTables_filter {
+            margin-left: 0 !important;
+            width: 100%;
+        }
+
+        .dataTables_filter input {
+            width: 100% !important;
+            margin-left: 0 !important;
+            margin-top: 10px;
+        }
     }
 </style>
 {% endblock %}
 
+{% block extrahead %}
+{{ block.super }}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.2.2/js/dataTables.buttons.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.print.min.js"></script>
+{% endblock %}
+
 {% block content %}
 <div class="dashboard-container">
-    <h1 class="dashboard-header">Canteen Dashboard</h1>
+    <h1 class="dashboard-header">Canteen Management Dashboard</h1>
 
     <div class="current-datetime">
-        Current Date and Time: {% now "F j, Y H:i" %}
+        Today is {% now "l, F j, Y" %} | Current time: {% now "H:i" %}
     </div>
 
     <div class="filter-section">
         <form method="get" class="filter-form">
             <label for="department">Filter by Department:</label>
-            <select name="department" id="department">
+            <select name="department" id="department" class="form-control">
                 <option value="">All Departments</option>
-                {% for dept in departments %}
-                <option value="{{ dept.id }}" {% if dept.id == selected_department %}selected{% endif %}>
-                    {{ dept.name }}
-                </option>
-                {% endfor %}
+                {% if departments %}
+                    {% for dept in departments %}
+                    <option value="{{ dept.id }}"
+                        {% if request.GET.department == dept.id|stringformat:"s" %}selected{% endif %}>
+                        {{ dept.name }}
+                    </option>
+                    {% endfor %}
+                {% else %}
+                    <option value="" disabled>No departments available</option>
+                {% endif %}
             </select>
             <button type="submit" class="filter-button">Apply Filter</button>
-            <a href="?" class="action-button">Reset</a>
+            <a href="?" class="action-button">Reset Filters</a>
         </form>
     </div>
 
     <div class="section-header">
         <h2 class="section-title">Today's Attendance ({{ today_attendance.count }})</h2>
         <div class="button-group">
-            <a href="{% url 'reports' %}?date={% now 'Y-m-d' %}" class="action-button">View Department Report</a>
-            <a href="/admin/canteen/canteenattendance/" class="action-button">View All Records</a>
-            <a href="/admin/canteen/canteenattendance/add/" class="action-button">Record Attendance</a>
+            <a href="{% url 'reports' %}?date={% now 'Y-m-d' %}" class="action-button">
+                <i class="fas fa-file-alt"></i> Department Report
+            </a>
+            <a href="/admin/canteen/canteenattendance/" class="action-button">
+                <i class="fas fa-list"></i> All Records
+            </a>
+            <a href="/admin/canteen/canteenattendance/add/" class="action-button">
+                <i class="fas fa-plus"></i> New Attendance
+            </a>
         </div>
     </div>
 
-    <table class="attendance-table">
+    <div class="table-controls">
+        <div class="export-buttons">
+            <button class="action-button" id="copyBtn"><i class="fas fa-copy"></i> Copy</button>
+            <button class="action-button" id="excelBtn"><i class="fas fa-file-excel"></i> Excel</button>
+            <button class="action-button" id="pdfBtn"><i class="fas fa-file-pdf"></i> PDF</button>
+        </div>
+        <div class="dataTables_filter">
+            <label>
+                <input type="search" class="form-control" placeholder="Search records...">
+            </label>
+        </div>
+    </div>
+
+    <table id="attendanceTable" class="attendance-table">
         <thead>
             <tr>
                 <th>Name</th>
@@ -160,19 +337,74 @@
         <tbody>
             {% for attendance in today_attendance %}
             <tr>
-                <td>{{ attendance.employee.user.get_full_name }}</td>
-                <td class="card-number">{{ attendance.employee.card_number }}</td>
-                <td>{{ attendance.employee.department.name }}</td>
-                <td>{{ attendance.time_in|time:"H:i" }}</td>
+                <td>{{ attendance.employee.user.get_full_name|default:"N/A" }}</td>
+                <td class="card-number">{{ attendance.employee.card_number|default:"N/A" }}</td>
+                <td>{{ attendance.employee.department.name|default:"N/A" }}</td>
+                <td>{{ attendance.time_in|time:"H:i"|default:"N/A" }}</td>
             </tr>
             {% empty %}
             <tr>
-                <td colspan="4" style="text-align: center; padding: 20px; color: #999; font-style: italic;">
-                    No attendance recorded yet today
+                <td colspan="4" class="empty-state">
+                    No attendance records found for today
                 </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 </div>
+
+<script>
+$(document).ready(function() {
+    var table = $('#attendanceTable').DataTable({
+        dom: 'lrtip',
+        pageLength: 10,
+        lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
+        responsive: true,
+        language: {
+            search: "",
+            searchPlaceholder: "Search records...",
+            paginate: {
+                previous: "‹",
+                next: "›"
+            }
+        }
+    });
+
+    // Custom button actions
+    $('#copyBtn').click(function() {
+        table.button('.buttons-copy').trigger();
+    });
+
+    $('#excelBtn').click(function() {
+        table.button('.buttons-excel').trigger();
+    });
+
+    $('#pdfBtn').click(function() {
+        table.button('.buttons-pdf').trigger();
+    });
+
+    // Initialize buttons (hidden)
+    new $.fn.dataTable.Buttons(table, {
+        buttons: [
+            {
+                extend: 'copy',
+                className: 'action-button',
+                text: '<i class="fas fa-copy"></i> Copy'
+            },
+            {
+                extend: 'excel',
+                className: 'action-button',
+                text: '<i class="fas fa-file-excel"></i> Excel'
+            },
+            {
+                extend: 'pdf',
+                className: 'action-button',
+                text: '<i class="fas fa-file-pdf"></i> PDF',
+                orientation: 'landscape',
+                pageSize: 'LEGAL'
+            }
+        ]
+    });
+});
+</script>
 {% endblock %}
